@@ -17,8 +17,8 @@ async def on_ready():
 
 @client.command()
 async def quiz(ctx):
-    channel = client.get_channel(852701609132818534)
-    message = await channel.history(limit=200).flatten()
+    vocab_channel = client.get_channel(852701609132818534)
+    message = await vocab_channel.history(limit=1).flatten()
     await ctx.message.author.send(message)
 
 client.run(TOKEN)
