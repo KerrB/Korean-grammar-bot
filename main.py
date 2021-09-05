@@ -1,6 +1,10 @@
 # bot.py
 import os
 
+import re
+import io
+import random
+
 import discord
 from dotenv import load_dotenv
 from discord.ext import commands
@@ -17,9 +21,21 @@ async def on_ready():
 
 @client.command()
 async def quiz(ctx):
+    q = io.open('words.txt', 'r', encoding="utf-8")
+    content = q.readlines()
+    quizWord = random.choice(content)
+    Korean = re.search('([\u3131-\uD79D]*)', quizWord).group(1)
+    await ctx.message.author.send(Korean)
+
+@client.command()
+async def update(ctx):
     vocab_channel = client.get_channel(852701609132818534)
     message = await vocab_channel.history(limit=1).flatten()
-    await ctx.message.author.send(message)
+    u = io.open("words.txt", 'a', encoding="utf-8")
+    for msg in message:
+        await ctx.message.author.send(msg.content)
+        u.write(msg.content)
+        u.write('\n')
 
 client.run(TOKEN)
 
