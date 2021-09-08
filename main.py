@@ -21,13 +21,16 @@ async def on_ready():
 
 @client.command()
 async def quiz(ctx):
+    await ctx.message.author.send('put greeting and instructions here')
     q = io.open('words.txt', 'r', encoding="utf-8")
     content = q.readlines()
-    quizWord = random.choice(content)
-    Korean = re.search('([\u3131-\uD79D]*)', quizWord).group(1)
-    English = re.search('([A-Z]*[a-z]+(')*\s)+', quizWord).group(1)
-    await ctx.message.author.send(Korean)
-    print(English)
+    count = 0
+    while count < 3:
+        quizWord = random.choice(content)
+        Korean = re.search('([\u3131-\uD79D]*)', quizWord).group(1)
+        English = re.search('([A-Z]*[a-z]+(\')*\s)+', quizWord).group(1)
+        await ctx.message.author.send(Korean)
+        count += 1
 
 @client.command()
 async def update(ctx):
