@@ -25,7 +25,9 @@ async def quiz(ctx):
     content = q.readlines()
     quizWord = random.choice(content)
     Korean = re.search('([\u3131-\uD79D]*)', quizWord).group(1)
+    English = re.search('([A-Z]*[a-z]+(')*\s)+', quizWord).group(1)
     await ctx.message.author.send(Korean)
+    print(English)
 
 @client.command()
 async def update(ctx):
