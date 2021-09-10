@@ -24,32 +24,37 @@ async def on_ready():
 @client.command()
 async def quiz(ctx):
     q = io.open('words.txt', 'r', encoding="utf-8")
-    await ctx.message.author.send('put greeting and instructions here')
     content = q.readlines()
-    quizWord = random.choice(content)
-    Korean = re.search('([\u3131-\uD79D]*)', quizWord).group(1)
-    English = re.search('([A-Z]*[a-z]+(\')*\s)+', quizWord).group(1)
-    await ctx.message.author.send(Korean)
-    print(English)
-    try:
-        message = await client.wait_for("message", check=lambda m: m.author == ctx.author and m.channel == ctx.channel, timeout=30.0)
-    except asyncio.TimeoutError:
-        await ctx.message.author.send('Time is up!')
-    else:
-        if message.content() == English:
-            await ctx.message.author.send('Correct!')
+    n = 0
+    while n < 3:
+        quizWord = random.choice(content)
+        Korean = re.search('([\u3131-\uD79D]*)', quizWord).group(1)
+        English = re.search('([A-Z ]*[a-z ]+(\')*\s)+', quizWord).group(1)
+        await ctx.message.author.send(Korean)
+        print(English)
+        try:
+            message = await client.wait_for("message", check=lambda m: m.author == ctx.author and m.channel == ctx.channel, timeout=30.0)
+        except asyncio.TimeoutError:
+            await ctx.message.author.send('Time is up! The correct answer was: ' + English.strip())
         else:
-            await ctx.message.author.send('That was incorrect')
+            if message.content.strip() == English.strip():
+                await ctx.message.author.send('Correct!')
+            else:
+                await ctx.message.author.send('Incorrect. The correct answer was: ' + English.strip())
+        n += 1
 
 @client.command()
 async def update(ctx):
     vocab_channel = client.get_channel(852701609132818534)
-    message = await vocab_channel.history(limit=1).flatten()
+    message = await vocab_channel.history(limit=50).flatten()
     u = io.open("words.txt", 'a', encoding="utf-8")
     for msg in message:
         await ctx.message.author.send(msg.content)
         u.write(msg.content)
         u.write('\n')
+        await asyncio.sleep(1.0)
+        await vocab_channel.purge(limit=1)
+        await asyncio.sleep(1.0)
 
 client.run(TOKEN)
 
