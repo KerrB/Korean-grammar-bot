@@ -1,4 +1,5 @@
-神様はじめました = testing
-神様はじめました = testing
-神様はじめました = testing
-神様はじめました = testing
+あ=a
+い=i
+え=e
+う=u
+お=o

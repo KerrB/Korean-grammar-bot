@@ -8,6 +8,7 @@ import random
 import asyncio
 
 import discord
+
 from dotenv import load_dotenv
 from discord.ext import commands
 
@@ -19,7 +20,7 @@ TOKEN = os.getenv('DISCORD_TOKEN')
 @client.event
 async def on_ready():
     channel = client.get_channel(793640270355890176)
-    await channel.send('Korean Bot has connected to the server')
+    await channel.send('Catarina has woken up in a new Isekai!')
 
 @client.command()
 async def quiz(ctx):
@@ -56,6 +57,14 @@ async def update(ctx):
         await vocab_channel.purge(limit=1)
         await asyncio.sleep(1.0)
 
+@client.event
+async def on_message(message):
+    JapaneseOnly = client.get_channel(886797260288032839)
+    English = '([A-Z ]*[a-z ]+(\')*\s)+'
+    if message.channel.id == 886797260288032839 and English in message.content:
+        await JapaneseOnly.purge(limit=1)
+        await message.author.send('Baka! No English allowed in that channel!')
+
 @client.command()
 async def jquiz(ctx):
     q = io.open('japanese.txt', 'r', encoding="utf-8")
@@ -70,12 +79,12 @@ async def jquiz(ctx):
         try:
             message = await client.wait_for("message", check=lambda m: m.author == ctx.author and m.channel == ctx.channel, timeout=30.0)
         except asyncio.TimeoutError:
-            await ctx.message.author.send('Time is up! The correct answer was: ' + English.strip())
+            await ctx.message.author.send('Nani? The correct answer was: ' + English.strip())
         else:
             if message.content.strip() == English.strip():
-                await ctx.message.author.send('Correct!')
+                await ctx.message.author.send('Oishii! That is correct!')
             else:
-                await ctx.message.author.send('Incorrect. The correct answer was: ' + English.strip())
+                await ctx.message.author.send('Baka! The correct answer was: ' + English.strip())
         n += 1
 
 @client.command()
@@ -92,5 +101,3 @@ async def jupdate(ctx):
         await asyncio.sleep(1.0)
 
 client.run(TOKEN)
-
-
